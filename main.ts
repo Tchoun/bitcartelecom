@@ -17,7 +17,11 @@ radio.onReceivedString(function (receivedString) {
         BitCar.stop()
     }
     if (receivedString == "Up") {
-        BitCar.move(Vitesse * Boost, Vitesse * Boost)
+        if (ObstacleDetecte != 0) {
+            BitCar.move(Vitesse * Boost, Vitesse * Boost)
+        } else {
+            music.playSoundEffect(music.builtinSoundEffect(soundExpression.hello), SoundExpressionPlayMode.UntilDone)
+        }
     }
     if (receivedString == "Down") {
         BitCar.move(VitesseArriere * Boost, VitesseArriere * Boost)
@@ -29,7 +33,7 @@ radio.onReceivedString(function (receivedString) {
         BitCar.move(VitesseArriere * Boost, Vitesse * Boost)
     }
     if (receivedString == "A") {
-        music.startMelody(music.builtInMelody(Melodies.Chase), MelodyOptions.Once)
+        music.startMelody(music.builtInMelody(Melodies.PowerUp), MelodyOptions.Once)
         strip.setPixelColor(0, neopixel.colors(NeoPixelColors.Red))
         strip.setPixelColor(1, neopixel.colors(NeoPixelColors.Blue))
         strip.setPixelColor(2, neopixel.colors(NeoPixelColors.Red))
@@ -46,7 +50,21 @@ radio.onReceivedString(function (receivedString) {
         }
     }
     if (receivedString == "B") {
-    	
+        music.startMelody(music.builtInMelody(Melodies.PowerDown), MelodyOptions.OnceInBackground)
+        strip.setPixelColor(0, neopixel.colors(NeoPixelColors.Yellow))
+        strip.setPixelColor(1, neopixel.colors(NeoPixelColors.Green))
+        strip.setPixelColor(2, neopixel.colors(NeoPixelColors.Yellow))
+        strip.setPixelColor(3, neopixel.colors(NeoPixelColors.Green))
+        for (let index = 0; index < 4; index++) {
+            strip.show()
+            basic.pause(250)
+            strip.rotate(1)
+        }
+        if (Boost == 1) {
+            Allumagevert()
+        } else {
+            AllumageRouge()
+        }
     }
     if (receivedString == "C") {
     	
@@ -57,12 +75,12 @@ radio.onReceivedString(function (receivedString) {
     if (receivedString == "L") {
         Boost = 1
         Allumagevert()
-        music.startMelody(music.builtInMelody(Melodies.PowerDown), MelodyOptions.Once)
+        music.startMelody(music.builtInMelody(Melodies.JumpDown), MelodyOptions.OnceInBackground)
     }
     if (receivedString == "R") {
         Boost = 2
         AllumageRouge()
-        music.startMelody(music.builtInMelody(Melodies.PowerUp), MelodyOptions.Once)
+        music.startMelody(music.builtInMelody(Melodies.JumpUp), MelodyOptions.OnceInBackground)
     }
     if (receivedString == "UpLeft") {
     	
@@ -81,11 +99,25 @@ let strip: neopixel.Strip = null
 let VitesseArriere = 0
 let Vitesse = 0
 let Boost = 0
+let ObstacleDetecte = 0
+ObstacleDetecte = 0
 Boost = 1
 Vitesse = 20
 VitesseArriere = -20
 strip = neopixel.create(DigitalPin.P8, 4, NeoPixelMode.RGB_RGB)
 Allumagevert()
 basic.forever(function () {
-	
+    if (BitCar.grove_ultrasonic(GrovePin.P12, DistanceUnit.cm) < 10) {
+        basic.showIcon(IconNames.Skull)
+        ObstacleDetecte = 1
+    } else {
+        ObstacleDetecte = 0
+        basic.showLeds(`
+            . . . . .
+            . . . . .
+            . . . . .
+            . . . . .
+            . . . . .
+            `)
+    }
 })
