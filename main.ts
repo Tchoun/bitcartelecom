@@ -12,13 +12,6 @@ function Allumagevert () {
     strip.setPixelColor(3, neopixel.colors(NeoPixelColors.Green))
     strip.show()
 }
-function AllumageOrange () {
-    strip.setPixelColor(0, neopixel.colors(NeoPixelColors.Orange))
-    strip.setPixelColor(1, neopixel.colors(NeoPixelColors.Orange))
-    strip.setPixelColor(2, neopixel.colors(NeoPixelColors.Orange))
-    strip.setPixelColor(3, neopixel.colors(NeoPixelColors.Orange))
-    strip.show()
-}
 radio.onReceivedString(function (receivedString) {
     if (receivedString == "Middle") {
         BitCar.stop()
@@ -89,18 +82,6 @@ radio.onReceivedString(function (receivedString) {
         AllumageRouge()
         music.startMelody(music.builtInMelody(Melodies.JumpUp), MelodyOptions.OnceInBackground)
     }
-    if (receivedString == "UpLeft") {
-    	
-    }
-    if (receivedString == "LowerLeft") {
-    	
-    }
-    if (receivedString == "UpRight") {
-    	
-    }
-    if (receivedString == "LowerRight") {
-    	
-    }
 })
 let strip: neopixel.Strip = null
 let VitesseArriere = 0
@@ -115,18 +96,15 @@ strip = neopixel.create(DigitalPin.P8, 4, NeoPixelMode.RGB_RGB)
 Allumagevert()
 basic.forever(function () {
     if (BitCar.grove_ultrasonic(GrovePin.P12, DistanceUnit.cm) < 7) {
-        AllumageOrange()
         basic.showIcon(IconNames.Skull)
         ObstacleDetecte = 1
-        radio.sendString("Obstacle")
+        strip.setPixelColor(0, neopixel.colors(NeoPixelColors.Orange))
+        strip.setPixelColor(1, neopixel.colors(NeoPixelColors.Orange))
+        strip.setPixelColor(2, neopixel.colors(NeoPixelColors.Orange))
+        strip.setPixelColor(3, neopixel.colors(NeoPixelColors.Orange))
+        strip.show()
     } else {
         ObstacleDetecte = 0
-        basic.showLeds(`
-            . . . . .
-            . . . . .
-            . . . . .
-            . . . . .
-            . . . . .
-            `)
+        basic.clearScreen()
     }
 })
